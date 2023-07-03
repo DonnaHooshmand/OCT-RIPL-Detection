@@ -68,17 +68,20 @@ if __name__ == "__main__":
     train_gen = DataGen(image_size, train_image_paths, train_mask_paths, batch_size=batch_size)
     valid_gen = DataGen(image_size, valid_image_paths, valid_mask_paths, batch_size=batch_size)
 
+    ## Turn the data into a torch.utils.data thing
+    train_loader = torch.utils.data.DataLoader(train_gen, batch_size=1000, shuffle=True)
+    
     ## ResUnet++
     model = build_resunetplusplus()
 
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-
+breakpoint()
 # The training loop
 for epoch in range(1):
     total_correct = 0
     total_loss = 0
-    for batch in train_gen:
+    for batch in train_loader:
         images, labels = batch
         
         optimizer.zero_grad()
