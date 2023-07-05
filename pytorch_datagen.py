@@ -37,27 +37,27 @@ class DataGen(Dataset):
         self.image_size = image_size
         self.images_path = images_path
         self.masks_path = masks_path
-        self.batch_size = batch_size
+        # self.batch_size = batch_size
 
     def __getitem__(self, index):
-        if (index + 1) * self.batch_size > len(self.images_path):
-            self.batch_size = len(self.images_path) - index * self.batch_size
+        # if (index + 1) * self.batch_size > len(self.images_path):
+        #     self.batch_size = len(self.images_path) - index * self.batch_size
 
-        images_path = self.images_path[index * self.batch_size: (index + 1) * self.batch_size]
-        masks_path = self.masks_path[index * self.batch_size: (index + 1) * self.batch_size]
+        # images_path = self.images_path[index * self.batch_size: (index + 1) * self.batch_size]
+        # masks_path = self.masks_path[index * self.batch_size: (index + 1) * self.batch_size]
 
-        images_batch = []
-        masks_batch = []
+        # images_batch = []
+        # masks_batch = []
 
-        for i in range(len(images_path)):
+        # for i in range(len(images_path)):
             # Read image and mask
-            image = parse_image(images_path[i], self.image_size)
-            mask = parse_mask(masks_path[i], self.image_size)
+        image = parse_image(self.images_path[index], self.image_size)
+        mask = parse_mask(self.masks_path[index], self.image_size)
 
-            images_batch.append(image)
-            masks_batch.append(mask)
+            # images_batch.append(image)
+            # masks_batch.append(mask)
 
-        return torch.tensor(images_batch), torch.tensor(masks_batch)
+        return image, mask
 
     def __len__(self):
-        return int(np.ceil(len(self.images_path) / float(self.batch_size)))
+        return len(self.images_path)
