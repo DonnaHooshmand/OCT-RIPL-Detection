@@ -24,8 +24,6 @@ from data_generator import DataGen
 from resunetPlusPlus_pytorch import build_resunetplusplus
 # from metrics import dice_coef, dice_loss
 
-from tensorflow.keras.optimizers import Adam, Nadam, SGD
-
 if __name__ == "__main__":
     ## Path
     file_path = "files/"
@@ -62,28 +60,32 @@ if __name__ == "__main__":
     epochs = 200
 
     train_steps = len(train_image_paths)//batch_size
+    print("train steps: ", train_steps)
     valid_steps = len(valid_image_paths)//batch_size
+    print("valid steps: ", valid_steps)
+
 
     ## Generator
     train_gen = DataGen(image_size, train_image_paths, train_mask_paths, batch_size=batch_size)
     valid_gen = DataGen(image_size, valid_image_paths, valid_mask_paths, batch_size=batch_size)
 
     ## Turn the data into a torch.utils.data thing
-    train_loader = torch.utils.data.DataLoader(train_gen, batch_size=1000, shuffle=True)
-    
+    train_loader = torch.utils.data.DataLoader(train_gen, batch_size=8)
+    valid_loader = torch.utils.data.DataLoader(valid_gen, batch_size=8)
+
     ## ResUnet++
     model = build_resunetplusplus()
 
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-breakpoint()
+
 # The training loop
 for epoch in range(1):
     total_correct = 0
     total_loss = 0
     for batch in train_loader:
         images, labels = batch
-        
+        breakpoint()
         optimizer.zero_grad()
         preds = model(images)
         
