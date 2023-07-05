@@ -15,8 +15,10 @@ def parse_image(img_path, image_size):
         pass
     else:
         image_rgb = cv2.resize(image_rgb, (image_size, image_size))
-    image_rgb = image_rgb/255.0
-    return image_rgb
+    gray_image = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2GRAY)
+    noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=3)
+    std_image = noisy_image/255.0
+    return std_image
 
 def parse_mask(mask_path, image_size):
     mask = cv2.imread(mask_path, -1)
@@ -30,6 +32,15 @@ def parse_mask(mask_path, image_size):
 
     return mask
 
+def add_gaussian_noise(image, mean, std_dev):
+    # Generate random Gaussian noise
+    noise = np.random.normal(mean, std_dev, image.shape).astype(np.uint8)
+
+    # Add noise to the image
+    noisy_image = cv2.add(image, noise)
+
+    return noisy_image
+
 
 
 class DataGen(Dataset):
@@ -40,22 +51,9 @@ class DataGen(Dataset):
         # self.batch_size = batch_size
 
     def __getitem__(self, index):
-        # if (index + 1) * self.batch_size > len(self.images_path):
-        #     self.batch_size = len(self.images_path) - index * self.batch_size
-
-        # images_path = self.images_path[index * self.batch_size: (index + 1) * self.batch_size]
-        # masks_path = self.masks_path[index * self.batch_size: (index + 1) * self.batch_size]
-
-        # images_batch = []
-        # masks_batch = []
-
-        # for i in range(len(images_path)):
-            # Read image and mask
+        
         image = parse_image(self.images_path[index], self.image_size)
         mask = parse_mask(self.masks_path[index], self.image_size)
-
-            # images_batch.append(image)
-            # masks_batch.append(mask)
 
         return image, mask
 
