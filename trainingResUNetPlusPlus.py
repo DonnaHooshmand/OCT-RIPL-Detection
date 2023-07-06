@@ -85,7 +85,7 @@ if __name__ == "__main__":
             images = images.unsqueeze(1)
             labels = labels.permute(0, 3, 1, 2).to(device)
 
-            preds = model(images)
+            preds = model(images).to(device)
             
             loss = F.cross_entropy(preds, labels)
             loss.backward()
@@ -94,7 +94,8 @@ if __name__ == "__main__":
             total_loss += loss.item()
             total_correct += preds.argmax(dim=1).eq(labels).sum().item()
 
-        print('epoch:', epoch, "total_correct:", total_correct, "loss:", total_loss)
+
+        print('-------------------epoch:', epoch, "total_correct:", total_correct, "loss:", total_loss)
 
 
 
