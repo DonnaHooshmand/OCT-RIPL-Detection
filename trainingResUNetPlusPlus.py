@@ -22,6 +22,7 @@ from resunetPlusPlus_pytorch_copy import build_resunetplusplus
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print("GPU available ", torch.cuda.is_available())
 
     ## Path
     file_path = "files/"
@@ -73,29 +74,31 @@ if __name__ == "__main__":
     
     
     # The training loop
-    for epoch in range(train_steps):
+    for epoch in range(150):
         total_correct = 0
         total_loss = 0
+        n = 0
         for batch in train_loader:
+            n+=1
             images, labels = batch
             images = images.to(device, dtype=torch.float)
             labels = labels.to(device, dtype=torch.float)
 
             optimizer.zero_grad()
-            images = images.unsqueeze(1)
+            images = images.unsqueeze(1).to(device)
             labels = labels.permute(0, 3, 1, 2).to(device)
 
-            preds = model(images).to(device)
+            preds = model(images)
             
-            loss = F.cross_entropy(preds, labels)
+            loss = F.mse_loss(preds, labels).to(device)
             loss.backward()
             optimizer.step()
 
             total_loss += loss.item()
             total_correct += preds.argmax(dim=1).eq(labels).sum().item()
 
-
+            print("finished batch ", n, " for epoch ", epoch)
         print('-------------------epoch:', epoch, "total_correct:", total_correct, "loss:", total_loss)
 
-
+    torch.save(model.state_dict(), 'trained_resUnetPlusPlus.pkl')
 
