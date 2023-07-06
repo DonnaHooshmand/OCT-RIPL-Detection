@@ -21,6 +21,8 @@ from pytorch_datagen import DataGen
 from resunetPlusPlus_pytorch_copy import build_resunetplusplus
 
 if __name__ == "__main__":
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     ## Path
     file_path = "files/"
     model_path = "files/resunetplusplus.h5"
@@ -39,9 +41,6 @@ if __name__ == "__main__":
     train_mask_paths = glob(os.path.join(train_path, "masks", "*"))
     train_image_paths.sort()
     train_mask_paths.sort()
-
-    # train_image_paths = train_image_paths[:2000]
-    # train_mask_paths = train_mask_paths[:2000]
 
     ## Validation
     valid_image_paths = glob(os.path.join(valid_path, "images", "*"))
@@ -69,7 +68,7 @@ if __name__ == "__main__":
     
     ## ResUnet++
     model = build_resunetplusplus()
-
+    model = model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     
     
@@ -79,19 +78,18 @@ if __name__ == "__main__":
         total_loss = 0
         for batch in train_loader:
             images, labels = batch
-            images = images.to(torch.float)
-            labels = labels.to(torch.float)
-            
+            images = images.to(device, dtype=torch.float)
+            labels = labels.to(device, dtype=torch.float)
 
             optimizer.zero_grad()
             images = images.unsqueeze(1)
-            labels = torch.permute(labels, (0,3,1,2))
+            labels = labels.permute(0, 3, 1, 2).to(device)
 
             preds = model(images)
             
             loss = F.cross_entropy(preds, labels)
             loss.backward()
-            optimizer.step( )
+            optimizer.step()
 
             total_loss += loss.item()
             total_correct += preds.argmax(dim=1).eq(labels).sum().item()
