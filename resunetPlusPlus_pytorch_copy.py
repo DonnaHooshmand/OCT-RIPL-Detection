@@ -4,6 +4,7 @@ import torch.nn as nn
 class Squeeze_Excitation(nn.Module):
     def __init__(self, channel, r=8):
         super().__init__()
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.pool = nn.AdaptiveAvgPool2d(1)
         self.net = nn.Sequential(
@@ -11,7 +12,7 @@ class Squeeze_Excitation(nn.Module):
             nn.ReLU(inplace=True),
             nn.Linear(channel // r, channel, bias=False),
             nn.Sigmoid(),
-        )
+        ).to(device)
 
     def forward(self, inputs):
         b, c, _, _ = inputs.shape
@@ -23,18 +24,20 @@ class Squeeze_Excitation(nn.Module):
 class Stem_Block(nn.Module):
     def __init__(self, in_c, out_c, stride):
         super().__init__()
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
         self.c1 = nn.Sequential(
             nn.Conv2d(in_c, out_c, kernel_size=3, stride=stride, padding=1),
             nn.BatchNorm2d(out_c),
             nn.ReLU(),
             nn.Conv2d(out_c, out_c, kernel_size=3, padding=1),
-        )
+        ).to(device)
 
         self.c2 = nn.Sequential(
             nn.Conv2d(in_c, out_c, kernel_size=1, stride=stride, padding=0),
             nn.BatchNorm2d(out_c),
-        )
+        ).to(device)
 
         self.attn = Squeeze_Excitation(out_c)
 
@@ -47,6 +50,7 @@ class Stem_Block(nn.Module):
 class ResNet_Block(nn.Module):
     def __init__(self, in_c, out_c, stride):
         super().__init__()
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.c1 = nn.Sequential(
             nn.BatchNorm2d(in_c),
@@ -55,12 +59,12 @@ class ResNet_Block(nn.Module):
             nn.BatchNorm2d(out_c),
             nn.ReLU(),
             nn.Conv2d(out_c, out_c, kernel_size=3, padding=1)
-        )
+        ).to(device)
 
         self.c2 = nn.Sequential(
             nn.Conv2d(in_c, out_c, kernel_size=1, stride=stride, padding=0),
             nn.BatchNorm2d(out_c),
-        )
+        ).to(device)
 
         self.attn = Squeeze_Excitation(out_c)
 
