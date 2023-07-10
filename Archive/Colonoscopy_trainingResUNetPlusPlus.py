@@ -20,14 +20,6 @@ from glob import glob
 from pytorch_datagen import DataGen
 from resunetPlusPlus_pytorch_copy import build_resunetplusplus
 
-def displayTensor(input_img: torch.tensor, file_name) -> None:
-    """
-    Display a tensor as an image using matplotlib.
-    """
-    input_img_cpu = input_img.detach().cpu().numpy()
-    input_img_cpu = np.squeeze(input_img_cpu)
-    plt.imsave(file_name,input_img_cpu, cmap='gray')
-
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("GPU available ", torch.cuda.is_available())
@@ -74,9 +66,6 @@ if __name__ == "__main__":
     ## Turn the data into a torch.utils.data thing
     train_loader = torch.utils.data.DataLoader(train_gen, batch_size=8)
     valid_loader = torch.utils.data.DataLoader(valid_gen, batch_size=8)
-    # for image, label in train_loader:
-    #     displayTensor(image[0], "testing_inputs.png")
-    #     raise ValueError
     
     ## ResUnet++
     model = build_resunetplusplus()

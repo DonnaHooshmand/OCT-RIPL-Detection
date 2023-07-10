@@ -9,16 +9,15 @@ import torch
 from torch.utils.data import Dataset
 
 def parse_image(img_path, image_size):
-    image_rgb = (cv2.imread(img_path, 1)/255).astype(np.float32)
+    image_rgb = cv2.imread(img_path, 1)
     h, w, _ = image_rgb.shape
-    print("**", np.mean(image_rgb))
     if (h == image_size) and (w == image_size):
         pass
     else:
         image_rgb = cv2.resize(image_rgb, (image_size, image_size))
     gray_image = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2GRAY)
-    noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=np.var(gray_image)*2)
-    std_image = noisy_image
+    noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=3)
+    std_image = noisy_image/255.0
     return std_image
 
 def parse_mask(mask_path, image_size):
@@ -35,12 +34,11 @@ def parse_mask(mask_path, image_size):
 
 def add_gaussian_noise(image, mean, std_dev):
     # Generate random Gaussian noise
-    noise = np.random.normal(mean, std_dev, image.shape)
+    noise = np.random.normal(mean, std_dev, image.shape).astype(np.uint8)
 
     # Add noise to the image
-    # noisy_image = cv2.add(image, noise)
-    noisy_image = image+noise
-    noisy_image = np.clip(noisy_image, 0, 1)
+    noisy_image = cv2.add(image, noise)
+
     return noisy_image
 
 
