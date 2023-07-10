@@ -1,7 +1,0 @@
-def displayTensor(input_img: torch.tensor) -> None:
-    """
-    Display a tensor as an image using matplotlib.
-    """
-    input_img_cpu = input_img.detach().cpu().numpy()
-    input_img_cpu = np.squeeze(input_img_cpu)
-    plt.imsave("FILENAME",input_img_cpu, cmap='gray')

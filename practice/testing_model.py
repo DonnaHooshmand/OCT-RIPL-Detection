@@ -25,11 +25,6 @@ from pytorch_datagen import *
 from resunetPlusPlus_pytorch_copy import build_resunetplusplus
 
 
-def mask_to_3d(mask):
-    mask = np.squeeze(mask)
-    mask = [mask, mask, mask]
-    mask = np.transpose(mask, (1, 2, 0))
-    return mask
 
 def displayTensor(input_img: torch.tensor, file_name) -> None:
     """
@@ -58,6 +53,19 @@ def display_all(img, truth,  pred, file_name):
     ax[2].set_title("Prediction")
     figure.tight_layout()
     figure.savefig(file_name)
+
+def overlayDisplay(input_img: torch.tensor, mask1: torch.tensor, mask2: torch.tensor) -> None:
+    color1 = np.array([0,0,1]).astype(np.float32)
+    color2 = np.array([1,0,0]).astype(np.float32)
+    input_img_cpu = np.squeeze(input_img.clone().detach().cpu().numpy()).astype(np.float32)
+    gray_img = np.stack((input_img_cpu, input_img_cpu, input_img_cpu), axis=2)
+    mask1_cpu = np.squeeze(mask1.clone().detach().cpu().numpy()).astype(np.float32)
+    mask2_cpu = np.squeeze(mask2.clone().detach().cpu().numpy()).astype(np.float32)
+    mask1_cpu = np.where(mask1_cpu[...,None], color1, gray_img)
+    mask2_cpu = np.where(mask2_cpu[...,None], color2, gray_img)
+    out = cv2.addWeighted(mask1_cpu, 0.5, mask2_cpu, 0.5,0)
+    out = cv2.addWeighted(gray_img, 0.2, out, 0.8,0)
+    plt.imsave("all_display.png", out)
 
 if __name__ == "__main__":
     model_path = "ColonoscopyTrained_resUnetPlusPlus.pkl"
@@ -118,8 +126,9 @@ if __name__ == "__main__":
             # displayTensor(predict_mask, "prediction.png")
             # displayTensor(masks, "truth.png")
             display_all(images, masks,  predict_mask, f"result/example{i}.png")
+            overlayDisplay(images, masks, predict_mask)
             i+=1
-            if i == 5:
+            if i == 1:
                 break
 
 
