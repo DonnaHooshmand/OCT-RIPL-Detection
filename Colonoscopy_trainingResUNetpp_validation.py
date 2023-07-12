@@ -20,6 +20,8 @@ from glob import glob
 from pytorch_datagen import DataGen
 from resunetPlusPlus_pytorch_copy import build_resunetplusplus
 
+from pytorch_toolbelt.losses import dice
+
 def displayTensor(input_img: torch.tensor, file_name) -> None:
     """
     Display a tensor as an image using matplotlib.
@@ -27,6 +29,38 @@ def displayTensor(input_img: torch.tensor, file_name) -> None:
     input_img_cpu = input_img.detach().cpu().numpy()
     input_img_cpu = np.squeeze(input_img_cpu)
     plt.imsave(file_name,input_img_cpu, cmap='gray')
+
+class BCEDiceLoss(nn.Module):
+    def __init__(self, weight=None, size_average=True):
+        super().__init__()
+
+    def forward(self, input, target):
+        pred = input.view(-1)
+        truth = target.view(-1)
+
+        # BCE loss
+        bce_loss = nn.BCELoss()(pred, truth).double()
+
+        # Dice Loss
+        dice_coef = (2.0 * (pred * truth).double().sum() + 1) / (
+            pred.double().sum() + truth.double().sum() + 1
+        )
+
+        return bce_loss + (1 - dice_coef)
+    
+def dice_coeff(input, target):
+    num_in_target = input.size(0)
+
+    smooth = 1.0
+
+    pred = input.view(num_in_target, -1)
+    truth = target.view(num_in_target, -1)
+
+    intersection = (pred * truth).sum(1)
+
+    loss = (2.0 * intersection + smooth) / (pred.sum(1) + truth.sum(1) + smooth)
+
+    return loss.mean().item()
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -82,14 +116,16 @@ if __name__ == "__main__":
     model = build_resunetplusplus()
     model = model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
+    loss_type = dice.DiceLoss
     
     
     # The training loop
     for epoch in range(150):
-        total_correct = 0
+        # total_correct = 0
+        t_accuracy = 0
         total_loss = 0
         n = 0
-        for batch in train_loader:
+        for t, batch in enumerate(train_loader):
             n+=1
             images, labels = batch
             images = images.to(device, dtype=torch.float)
@@ -101,21 +137,25 @@ if __name__ == "__main__":
 
             preds = model(images)
             
-            loss = F.mse_loss(preds, labels).to(device)
+
+            # loss = F.mse_loss(preds, labels).to(device)
+            loss = loss_type(preds, labels).to(device)
             loss.backward()
             optimizer.step()
 
             total_loss += loss.item()
-            total_correct += preds.argmax(dim=1).eq(labels).sum().item()
+            t_accuracy += dice_coeff(preds, labels), preds.size(0)
+            # total_correct += preds.argmax(dim=1).eq(labels).sum().item()
 
             print("finished batch ", n, " for epoch ", epoch)
         
         # Validation phase
         model.eval()
         valid_loss = 0
-        valid_correct = 0
+        # valid_correct = 0
+        v_accuracy = 0
         with torch.no_grad():
-            for batch in valid_loader:
+            for v, batch in enumerate(valid_loader):
                 images, labels = batch
                 images = images.to(device, dtype=torch.float)
                 labels = labels.to(device, dtype=torch.float)
@@ -125,16 +165,19 @@ if __name__ == "__main__":
 
                 preds = model(images)
                 
-                loss = F.mse_loss(preds, labels).to(device)
+                # loss = F.mse_loss(preds, labels).to(device)
+                loss = loss_type(preds, labels).to(device)
+                print('validation loss: ', loss)
 
                 valid_loss += loss.item()
-                valid_correct += preds.argmax(dim=1).eq(labels).sum().item()
+                v_accuracy += dice_coeff(preds, labels), preds.size(0)
+                # valid_correct += preds.argmax(dim=1).eq(labels).sum().item()
 
         # Calculate average losses and accuracies
-        train_loss = total_loss / len(train_loader.dataset)
-        train_accuracy = total_correct / len(train_loader.dataset)
-        valid_loss = valid_loss / len(valid_loader.dataset)
-        valid_accuracy = valid_correct / len(valid_loader.dataset)
+        train_loss = total_loss / (t+1)
+        train_accuracy = t_accuracy / (t+1)
+        valid_loss = valid_loss / (v+1)
+        valid_accuracy = v_accuracy / (v+1)
 
         # Print or store the results
         print('-------------------Epoch:', epoch)

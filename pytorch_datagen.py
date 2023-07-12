@@ -11,13 +11,13 @@ from torch.utils.data import Dataset
 def parse_image(img_path, image_size):
     image_rgb = (cv2.imread(img_path, 1)/255).astype(np.float32)
     h, w, _ = image_rgb.shape
-    print("**", np.mean(image_rgb))
     if (h == image_size) and (w == image_size):
         pass
     else:
         image_rgb = cv2.resize(image_rgb, (image_size, image_size))
     gray_image = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2GRAY)
     noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=np.var(gray_image)*2)
+    # noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=3)
     std_image = noisy_image
     return std_image
 
