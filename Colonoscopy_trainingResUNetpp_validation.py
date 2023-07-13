@@ -20,6 +20,7 @@ from glob import glob
 from pytorch_datagen import DataGen
 from resunetPlusPlus_pytorch_copy import build_resunetplusplus
 
+from torchmetrics.classification import Dice 
 from pytorch_toolbelt.losses import dice
 
 def displayTensor(input_img: torch.tensor, file_name) -> None:
@@ -116,7 +117,7 @@ if __name__ == "__main__":
     model = build_resunetplusplus()
     model = model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
-    loss_type = dice.DiceLoss
+    loss_type = Dice
     
     
     # The training loop
