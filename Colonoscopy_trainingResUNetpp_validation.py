@@ -20,8 +20,8 @@ from glob import glob
 from pytorch_datagen import DataGen
 from resunetPlusPlus_pytorch_copy import build_resunetplusplus
 
-from torchmetrics.classification import Dice 
-from pytorch_toolbelt.losses import dice
+from torchmetrics.classification import Dice
+# from pytorch_toolbelt.losses import dice
 
 def displayTensor(input_img: torch.tensor, file_name) -> None:
     """
@@ -48,7 +48,7 @@ class BCEDiceLoss(nn.Module):
         )
 
         return bce_loss + (1 - dice_coef)
-    
+
 def dice_coeff(input, target):
     num_in_target = input.size(0)
 
@@ -117,13 +117,14 @@ if __name__ == "__main__":
     model = build_resunetplusplus()
     model = model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
-    loss_type = Dice
+    loss_type = Dice().to(device)
     
-    
+    epoch_tracker = {}
+
     # The training loop
     for epoch in range(150):
-        # total_correct = 0
-        t_accuracy = 0
+        total_correct = 0
+        # t_accuracy = 0
         total_loss = 0
         n = 0
         for t, batch in enumerate(train_loader):
@@ -138,23 +139,21 @@ if __name__ == "__main__":
 
             preds = model(images)
             
-
-            # loss = F.mse_loss(preds, labels).to(device)
-            loss = loss_type(preds, labels).to(device)
+            loss = F.mse_loss(preds, labels).to(device)
             loss.backward()
             optimizer.step()
 
             total_loss += loss.item()
-            t_accuracy += dice_coeff(preds, labels), preds.size(0)
-            # total_correct += preds.argmax(dim=1).eq(labels).sum().item()
+            # t_accuracy += dice_coeff(preds, labels), preds.size(0)
+            total_correct += preds.argmax(dim=1).eq(labels).sum().item()
 
             print("finished batch ", n, " for epoch ", epoch)
         
         # Validation phase
         model.eval()
         valid_loss = 0
-        # valid_correct = 0
-        v_accuracy = 0
+        valid_correct = 0
+        # v_accuracy = 0
         with torch.no_grad():
             for v, batch in enumerate(valid_loader):
                 images, labels = batch
@@ -166,20 +165,23 @@ if __name__ == "__main__":
 
                 preds = model(images)
                 
-                # loss = F.mse_loss(preds, labels).to(device)
-                loss = loss_type(preds, labels).to(device)
+                loss = F.mse_loss(preds, labels).to(device)
+                # loss = loss_type(preds, labels).to(device)
                 print('validation loss: ', loss)
 
                 valid_loss += loss.item()
-                v_accuracy += dice_coeff(preds, labels), preds.size(0)
-                # valid_correct += preds.argmax(dim=1).eq(labels).sum().item()
+                # v_accuracy += dice_coeff(preds, labels), preds.size(0)
+                valid_correct += preds.argmax(dim=1).eq(labels).sum().item()
 
         # Calculate average losses and accuracies
         train_loss = total_loss / (t+1)
-        train_accuracy = t_accuracy / (t+1)
+        train_accuracy = total_correct / (t+1)
         valid_loss = valid_loss / (v+1)
-        valid_accuracy = v_accuracy / (v+1)
+        valid_accuracy = valid_correct / (v+1)
 
+        if epoch % 10 == 0:
+            epoch_tracker[epoch] = ['training loss: ', train_loss, 'training accuracy: ', train_accuracy, 'validation loss: ', valid_loss, 'validation accuracy: ', valid_accuracy]
+            
         # Print or store the results
         print('-------------------Epoch:', epoch)
         print('Training - Loss:', train_loss, 'Accuracy:', train_accuracy)
@@ -187,6 +189,6 @@ if __name__ == "__main__":
 
         # Switch back to training mode
         model.train()
-
+    print(epoch_tracker)
     torch.save(model.state_dict(), 'trained_resUnetPlusPlus.pkl')
 

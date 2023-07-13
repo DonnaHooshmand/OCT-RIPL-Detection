@@ -30,7 +30,6 @@ def parse_mask(mask_path, image_size):
         mask = cv2.resize(mask, (image_size, image_size))
     mask = np.expand_dims(mask, -1)
     mask = mask/255.0
-
     return mask
 
 def add_gaussian_noise(image, mean, std_dev):
