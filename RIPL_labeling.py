@@ -99,6 +99,8 @@ def make_mask_array(segmentation_path, annotation_folder):
         segmentation_array = convert_segmentation(segmentation_path)
         mask_array = segmentation_array - annotation_array
         mask_array[mask_array == 130] = 255
+        mask_array[mask_array == 131] = 255
+        mask_array[mask_array == 1] = 0
 
     else:
         # Convert the segmentation to a mask
@@ -122,10 +124,11 @@ def save_mask(mask_array, mask_folder, segmentation_path):
 
 
 if __name__ == "__main__":
+
     # Path
-    segmentation_folder = "/Users/lauramachlab/Library/CloudStorage/OneDrive-Personal/Documents/_northwestern/_MSAI/c3 lab/OCT-RIPL-Detection/data/RIPL_data/segmentations/"
-    annotation_folder = "/Users/lauramachlab/Library/CloudStorage/OneDrive-Personal/Documents/_northwestern/_MSAI/c3 lab/OCT-RIPL-Detection/data/RIPL_data/annotations_training/"
-    mask_folder = "/Users/lauramachlab/Library/CloudStorage/OneDrive-Personal/Documents/_northwestern/_MSAI/c3 lab/OCT-RIPL-Detection/data/RIPL_data/masks/"
+    segmentation_folder = "/Users/lauramachlab/Library/CloudStorage/OneDrive-Personal/Documents/_northwestern/_MSAI/c3 lab/resunet_training/OCT-RIPL-Detection/data/RIPL_data/segmentations"
+    annotation_folder = "/Users/lauramachlab/Library/CloudStorage/OneDrive-Personal/Documents/_northwestern/_MSAI/c3 lab/resunet_training/OCT-RIPL-Detection/data/RIPL_data/annotations_training"
+    mask_folder = "/Users/lauramachlab/Library/CloudStorage/OneDrive-Personal/Documents/_northwestern/_MSAI/c3 lab/resunet_training/OCT-RIPL-Detection/data/RIPL_data/masks"
 
     # Get the list of segmentations
     segmentation_list = os.listdir(segmentation_folder)
