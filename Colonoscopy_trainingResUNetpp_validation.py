@@ -134,8 +134,9 @@ if __name__ == "__main__":
             labels = labels.to(device, dtype=torch.float)
 
             optimizer.zero_grad()
-            images = images.unsqueeze(1).to(device)
+            # images = images.unsqueeze(1).to(device)
             labels = labels.permute(0, 3, 1, 2).to(device)
+            images = images.permute(0, 3, 1, 2).to(device)
 
             preds = model(images)
             
@@ -160,8 +161,9 @@ if __name__ == "__main__":
                 images = images.to(device, dtype=torch.float)
                 labels = labels.to(device, dtype=torch.float)
 
-                images = images.unsqueeze(1).to(device)
+                # images = images.unsqueeze(1).to(device)
                 labels = labels.permute(0, 3, 1, 2).to(device)
+                images = images.permute(0, 3, 1, 2).to(device)
 
                 preds = model(images)
                 
@@ -190,5 +192,5 @@ if __name__ == "__main__":
         # Switch back to training mode
         model.train()
     print(epoch_tracker)
-    torch.save(model.state_dict(), 'trained_resUnetPlusPlus.pkl')
+    torch.save(model.state_dict(), 'OGtrained_resUnetPlusPlus.pkl')
 

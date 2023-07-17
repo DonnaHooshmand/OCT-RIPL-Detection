@@ -70,7 +70,7 @@ def overlayDisplay(input_img: torch.tensor, mask1: torch.tensor, mask2: torch.te
 if __name__ == "__main__":
     model_path = "ColonoscopyTrained_resUnetPlusPlus.pkl"
     save_path = "result"
-    test_path = "../new_data/kvasir_segmentation_dataset/test/"
+    test_path = "new_data/kvasir_segmentation_dataset/test/"
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("GPU available: ", torch.cuda.is_available())
@@ -127,7 +127,7 @@ if __name__ == "__main__":
             # displayTensor(masks, "truth.png")
             display_all(images, masks,  predict_mask, f"result/example{i}.png")
             overlayDisplay(images, masks, predict_mask)
-            i+=5
+            i+=1
             if i == 5:
                 break
 
