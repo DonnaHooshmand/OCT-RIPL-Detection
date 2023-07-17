@@ -127,8 +127,8 @@ if __name__ == "__main__":
             # displayTensor(masks, "truth.png")
             display_all(images, masks,  predict_mask, f"result/example{i}.png")
             overlayDisplay(images, masks, predict_mask)
-            i+=1
-            if i == 1:
+            i+=5
+            if i == 5:
                 break
 
 
