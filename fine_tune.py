@@ -84,7 +84,7 @@ for name, parameter in model.named_parameters():
 
 
 # start training
-image_path = 'data\RIPL_data\RIPL_all'
+image_path = r'data\RIPL_data\RIPL_all'
 mask_path = r'data\RIPL_data\masks'
 
 train_dir =  r'data\RIPL_data\train_img'
