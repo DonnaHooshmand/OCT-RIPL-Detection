@@ -80,9 +80,7 @@ for name, parameter in model.named_parameters():
     else:
         parameter.requires_grad = False
 
-#unfreeze the selected layers
-for param in model[-44:].parameters():
-    param.requires_grad = True
+
 
 # start training
 image_path = r'data\RIPL_data\RIPL_all'
