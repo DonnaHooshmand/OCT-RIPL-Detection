@@ -8,19 +8,21 @@ import cv2
 import torch
 from torch.utils.data import Dataset
 
-def parse_image(img_path, image_size):
+def parse_image(img_path, image_size, noise):
     image_rgb = (cv2.imread(img_path, 1)/255).astype(np.float32)
     h, w, _ = image_rgb.shape
     if (h == image_size) and (w == image_size):
         pass
     else:
         image_rgb = cv2.resize(image_rgb, (image_size, image_size))
-    # gray_image = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2GRAY)
-    # noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=np.var(gray_image)*2)
-    # # noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=3)
-    # std_image = noisy_image
-    # return std_image
-    return image_rgb
+    if noise==True:
+        gray_image = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2GRAY)
+        noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=np.var(gray_image)*2)
+        # noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=3)
+        std_image = noisy_image
+        return std_image
+    else:
+        return image_rgb
 
 def parse_mask(mask_path, image_size):
     mask = cv2.imread(mask_path, -1)
@@ -46,15 +48,16 @@ def add_gaussian_noise(image, mean, std_dev):
 
 
 class DataGen(Dataset):
-    def __init__(self, image_size, images_path, masks_path, batch_size=8):
+    def __init__(self, image_size, images_path, masks_path, noise=False):
         self.image_size = image_size
         self.images_path = images_path
         self.masks_path = masks_path
         # self.batch_size = batch_size
+        self.noise = noise
 
     def __getitem__(self, index):
         
-        image = parse_image(self.images_path[index], self.image_size)
+        image = parse_image(self.images_path[index], self.image_size, self.noise)
         mask = parse_mask(self.masks_path[index], self.image_size)
 
         return image, mask
