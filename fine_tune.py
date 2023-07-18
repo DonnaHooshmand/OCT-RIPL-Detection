@@ -26,6 +26,7 @@ import os
 import shutil
 import random
 
+
 def split_dataset(image_dir, mask_dir, train_dir, train_mdir, 
                   validation_dir, validation_mdir, test_dir, 
                   test_mdir, split_ratios=(0.8, 0.1, 0.1)):
@@ -83,7 +84,7 @@ for name, parameter in model.named_parameters():
 
 
 # start training
-image_path = r'data\RIPL_data\RIPL_all'
+image_path = 'data\RIPL_data\RIPL_all'
 mask_path = r'data\RIPL_data\masks'
 
 train_dir =  r'data\RIPL_data\train_img'
