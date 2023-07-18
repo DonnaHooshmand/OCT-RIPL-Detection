@@ -79,17 +79,6 @@ for name, parameter in model.named_parameters():
         parameter.requires_grad = True
     else:
         parameter.requires_grad = False
-# print(model.parameters)
-
-# for i, param in enumerate(model.parameters()):
-#     param.requires_grad = False
-#     print(f'param {i} ')
-
-
-# for i, param in enumerate(model.parameters()):
-#     if i>=125:
-#         param.requires_grad = True
-    
 
 #unfreeze the selected layers
 for param in model[-44:].parameters():
