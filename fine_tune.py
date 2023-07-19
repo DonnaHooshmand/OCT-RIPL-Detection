@@ -147,32 +147,33 @@ for epoch in range(150):
     total_loss = 0
     n = 0
     for t, batch in enumerate(train_loader):
-        n+=1
-        images, labels = batch
-        images = images.to(device, dtype=torch.float)
-        labels = labels.to(device, dtype=torch.float)
+        if t != 11:
+            n+=1
+            images, labels = batch
+            images = images.to(device, dtype=torch.float)
+            labels = labels.to(device, dtype=torch.float)
 
-        optimizer.zero_grad()
-        images = images.unsqueeze(1).to(device)
-        labels = labels.permute(0, 3, 1, 2).to(device)
-        # images = images.permute(0, 3, 1, 2).to(device)
-        print('the dimensions of labels 1 is: ', labels.shape)
-        print('the dimensions of image 1 is: ', images.shape)
+            optimizer.zero_grad()
+            images = images.unsqueeze(1).to(device)
+            labels = labels.permute(0, 3, 1, 2).to(device)
+            # images = images.permute(0, 3, 1, 2).to(device)
+            print('the dimensions of labels 1 is: ', labels.shape)
+            print('the dimensions of image 1 is: ', images.shape)
 
-        # print('the dimensions of the input image is: ', images.shape)
-        preds = model(images)
-        print('the dimensions of preds is: ', preds.shape)
-        print('the dimensions of labels is: ', labels.shape)
-        loss = F.mse_loss(preds, labels).to(device)
-        loss.backward()
-        optimizer.step()
+            # print('the dimensions of the input image is: ', images.shape)
+            preds = model(images)
+            print('the dimensions of preds is: ', preds.shape)
+            print('the dimensions of labels is: ', labels.shape)
+            loss = F.mse_loss(preds, labels).to(device)
+            loss.backward()
+            optimizer.step()
 
-        total_loss += loss.item()
-        # t_accuracy += dice_coeff(preds, labels), preds.size(0)
-        total_correct += preds.argmax(dim=1).eq(labels).sum().item()
+            total_loss += loss.item()
+            # t_accuracy += dice_coeff(preds, labels), preds.size(0)
+            total_correct += preds.argmax(dim=1).eq(labels).sum().item()
 
-        print("finished batch ", n, " for epoch ", epoch)
-    
+            print("finished batch ", n, " for epoch ", epoch)
+        
     # Validation phase
     model.eval()
     valid_loss = 0
