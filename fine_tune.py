@@ -151,27 +151,17 @@ for epoch in range(150):
     total_loss = 0
     n = 0
     for t, batch in enumerate(train_loader):
-        print('step 1')
         n+=1
         images, labels = batch
-        print('step 2')
         images = images.to(device, dtype=torch.float)
-        print('step 3')
         labels = labels.to(device, dtype=torch.float)
-        print('step 4')
         optimizer.zero_grad()
-        print('step 5')
         images = images.unsqueeze(1).to(device)
-        print('step 6')
         labels = labels.permute(0, 3, 1, 2).to(device)
         # images = images.permute(0, 3, 1, 2).to(device)
-        print('the dimensions of labels 1 is: ', labels.shape)
-        print('the dimensions of image 1 is: ', images.shape)
 
         # print('the dimensions of the input image is: ', images.shape)
         preds = model(images)
-        print('the dimensions of preds is: ', preds.shape)
-        print('the dimensions of labels is: ', labels.shape)
         loss = F.mse_loss(preds, labels).to(device)
         loss.backward()
         optimizer.step()
@@ -181,7 +171,6 @@ for epoch in range(150):
         total_correct += preds.argmax(dim=1).eq(labels).sum().item()
 
         print("finished batch ", n, " for epoch ", epoch)
-    print('done with batch loop')
     # Validation phase
     model.eval()
     valid_loss = 0
