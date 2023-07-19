@@ -121,6 +121,9 @@ if __name__ == "__main__":
     
     epoch_tracker = {}
 
+    train_losses = []
+    val_losses = []
+
     # The training loop
     for epoch in range(150):
         total_correct = 0
@@ -179,6 +182,9 @@ if __name__ == "__main__":
         valid_loss = valid_loss / (v+1)
         valid_accuracy = valid_correct / (v+1)
 
+        train_losses.append(train_loss)
+        val_losses.append(valid_loss)
+        
         if epoch % 10 == 0:
             epoch_tracker[epoch] = ['training loss: ', train_loss, 'training accuracy: ', train_accuracy, 'validation loss: ', valid_loss, 'validation accuracy: ', valid_accuracy]
             
@@ -189,6 +195,26 @@ if __name__ == "__main__":
 
         # Switch back to training mode
         model.train()
+
+    epochs = range(1, len(train_losses) + 1)
+
+    plt.figure(figsize=(8, 6))  # Optional: Adjust the figure size
+
+    # Plotting training loss
+    plt.plot(epochs, train_losses, label='Training Loss', marker='', linestyle='-', color='blue')
+
+    # Plotting validation loss
+    plt.plot(epochs, val_losses, label='Validation Loss', marker='', linestyle='-', color='orange')
+
+    # Add labels, title, and legend
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.title('Training and Validation Loss over Epochs for Pre-Training Roads Model')
+    plt.legend()
+
+
+    plt.savefig('roads_loss_plot.png')
+
     print(epoch_tracker)
     torch.save(model.state_dict(), 'trained_resUnetPlusPlus.pkl')
 
