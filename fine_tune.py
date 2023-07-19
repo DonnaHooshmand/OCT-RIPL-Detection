@@ -156,6 +156,8 @@ for epoch in range(150):
         images = images.unsqueeze(1).to(device)
         labels = labels.permute(0, 3, 1, 2).to(device)
         # images = images.permute(0, 3, 1, 2).to(device)
+        print('the dimensions of labels 1 is: ', labels.shape)
+        print('the dimensions of image 1 is: ', images.shape)
 
         # print('the dimensions of the input image is: ', images.shape)
         preds = model(images)
