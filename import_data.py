@@ -43,25 +43,25 @@ label_file_extension = ".tif"  # Change to the desired file extension
 
 train_url = r'https://www.cs.toronto.edu/~vmnih/data/mass_roads/train/sat/index.html'
 train_labels_url = r'https://www.cs.toronto.edu/~vmnih/data/mass_roads/train/map/index.html'
-train_directory = "train_images"
-train_labels_directory = "train_labels"
-# import_data(train_url, train_directory, 10, image_file_extension)
-# import_data(train_labels_url, train_labels_directory, 10, label_file_extension)
+train_directory = "data\roads_dataset\test_images"
+train_labels_directory = "data\roads_dataset\train_labels"
+import_data(train_url, train_directory, 10, image_file_extension)
+import_data(train_labels_url, train_labels_directory, 10, label_file_extension)
 print('finished importing train labels')
 
 valid_url = r'https://www.cs.toronto.edu/~vmnih/data/mass_roads/valid/sat/index.html'
 valid_labels_url = r'https://www.cs.toronto.edu/~vmnih/data/mass_roads/valid/map/index.html'
-valid_directory = "valid_images"
-valid_labels_directory = "valid_labels"
-# import_data(valid_url, valid_directory, 10, image_file_extension)
+valid_directory = "data\roads_dataset\valid_images"
+valid_labels_directory = "data\roads_dataset\valid_labels"
+import_data(valid_url, valid_directory, 10, image_file_extension)
 print('finished importing validation images')
 import_data(valid_labels_url, valid_labels_directory, 7, label_file_extension)
 print('finished importing validation labels')
 
 test_url = r'https://www.cs.toronto.edu/~vmnih/data/mass_roads/test/sat/index.html'
 test_labels_url = r'https://www.cs.toronto.edu/~vmnih/data/mass_roads/test/map/index.html'
-test_directory = "test_images"
-test_labels_directory = "test_labels"
+test_directory = "data\roads_dataset\test_images"
+test_labels_directory = "data\roads_dataset\test_labels"
 import_data(test_url, test_directory, 10, image_file_extension)
 print('finished importing test images')
 import_data(test_labels_url, test_labels_directory, 10, label_file_extension)

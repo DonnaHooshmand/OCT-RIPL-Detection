@@ -106,6 +106,7 @@ def make_mask_array(segmentation_path, annotation_folder):
         # Convert the segmentation to a mask
         mask_array = convert_segmentation(segmentation_path)
 
+    mask_array = np.sum(mask_array, axis=2)
     return mask_array
 
 def save_mask(mask_array, mask_folder, segmentation_path):
@@ -114,7 +115,7 @@ def save_mask(mask_array, mask_folder, segmentation_path):
     segmentation_name = os.path.basename(segmentation_path)
     mask_path = os.path.join(mask_folder, segmentation_name)
 
-    mask = Image.fromarray(mask_array)
+    mask = Image.fromarray(mask_array.astype(np.uint8))
 
     # Save the image as a PNG file
     mask.save(mask_path)
@@ -126,9 +127,9 @@ def save_mask(mask_array, mask_folder, segmentation_path):
 if __name__ == "__main__":
 
     # Path
-    segmentation_folder = "/Users/lauramachlab/Library/CloudStorage/OneDrive-Personal/Documents/_northwestern/_MSAI/c3 lab/resunet_training/OCT-RIPL-Detection/data/RIPL_data/segmentations"
-    annotation_folder = "/Users/lauramachlab/Library/CloudStorage/OneDrive-Personal/Documents/_northwestern/_MSAI/c3 lab/resunet_training/OCT-RIPL-Detection/data/RIPL_data/annotations_training"
-    mask_folder = "/Users/lauramachlab/Library/CloudStorage/OneDrive-Personal/Documents/_northwestern/_MSAI/c3 lab/resunet_training/OCT-RIPL-Detection/data/RIPL_data/masks"
+    segmentation_folder = "data\RIPL_data\segmentations"
+    annotation_folder = "data\RIPL_data\annotations_training"
+    mask_folder = "data\RIPL_data\masks"
 
     # Get the list of segmentations
     segmentation_list = os.listdir(segmentation_folder)
