@@ -85,15 +85,15 @@ for name, parameter in model.named_parameters():
 
 
 # start training
-image_path = r'data\RIPL_data\RIPL_all'
-mask_path = r'data\RIPL_data\masks'
+image_path = r'data/RIPL_data/RIPL_all'
+mask_path = r'data/RIPL_data/masks'
 
-train_dir =  r'data\RIPL_data\train_img'
-train_mdir = r'data\RIPL_data\train_mask' 
-validation_dir = r'data\RIPL_data\valid_img'
-validation_mdir = r'data\RIPL_data\valid_mask'
-test_dir = r'data\RIPL_data\test_img'
-test_mdir = r'data\RIPL_data\test_mask'
+train_dir =  r'data/RIPL_data/train_img'
+train_mdir = r'data/RIPL_data/train_mask' 
+validation_dir = r'data/RIPL_data/valid_img'
+validation_mdir = r'data/RIPL_data/valid_mask'
+test_dir = r'data/RIPL_data/test_img'
+test_mdir = r'data/RIPL_data/test_mask'
 
 split_dataset(image_path, mask_path, train_dir, train_mdir, validation_dir, validation_mdir, test_dir, test_mdir)
 
