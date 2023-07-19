@@ -159,7 +159,8 @@ for epoch in range(150):
 
         # print('the dimensions of the input image is: ', images.shape)
         preds = model(images)
-        
+        print('the dimensions of preds is: ', preds.shape)
+        print('the dimensions of labels is: ', labels.shape)
         loss = F.mse_loss(preds, labels).to(device)
         loss.backward()
         optimizer.step()
