@@ -157,7 +157,7 @@ for epoch in range(150):
         labels = labels.permute(0, 3, 1, 2).to(device)
         images = images.permute(0, 3, 1, 2).to(device)
 
-       
+        print('the dimensions of the input image is: ', images.shape)
         preds = model(images)
         
         loss = F.mse_loss(preds, labels).to(device)
