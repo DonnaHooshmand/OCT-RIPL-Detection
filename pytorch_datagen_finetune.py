@@ -9,18 +9,19 @@ import torch
 from torch.utils.data import Dataset
 
 def parse_image(img_path, image_h, image_w):
-    image_rgb = (cv2.imread(img_path, 1)/255).astype(np.float32)
-    h, w, _ = image_rgb.shape
+    image_gray = (cv2.imread(img_path, 0)/255).astype(np.float32)
+
+    h, w, _ = image_gray.shape
     if (h == image_h) and (w == image_w):
         pass
     else:
-        image_rgb = cv2.resize(image_rgb, (image_h, image_w))
+        image_gray = cv2.resize(image_gray, (image_h, image_w))
     # gray_image = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2GRAY)
     # noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=np.var(gray_image)*2)
     # # noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=3)
     # std_image = noisy_image
     # return std_image
-    return image_rgb
+    return image_gray
 
 def parse_mask(mask_path, image_h, image_w):
     mask = cv2.imread(mask_path, -1)
