@@ -132,6 +132,8 @@ valid_loader = torch.utils.data.DataLoader(valid_gen, batch_size=8)
 #     raise ValueError
 
 ## ResUnet++
+
+
 model = build_resunetplusplus()
 model = model.to(device)
 optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -155,6 +157,7 @@ for epoch in range(150):
         labels = labels.permute(0, 3, 1, 2).to(device)
         images = images.permute(0, 3, 1, 2).to(device)
 
+        print('the dimensions of the input image is: ', images.shape())
         preds = model(images)
         
         loss = F.mse_loss(preds, labels).to(device)
