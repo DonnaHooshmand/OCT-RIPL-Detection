@@ -15,7 +15,8 @@ def parse_image(img_path, image_h, image_w):
     if (h == image_h) and (w == image_w):
         pass
     else:
-        image_gray = cv2.resize(image_gray, (image_h, image_w))
+        # image_gray = cv2.resize(image_gray, (image_h, image_w))
+        image_gray = cv2.resize(image_gray, (image_w, image_h))
     # gray_image = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2GRAY)
     # noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=np.var(gray_image)*2)
     # # noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=3)
@@ -29,7 +30,7 @@ def parse_mask(mask_path, image_h, image_w):
     if (h == image_h) and (w == image_w):
         pass
     else:
-        mask = cv2.resize(mask, (image_h, image_w))
+        mask = cv2.resize(mask, (image_w, image_h))
     mask = np.expand_dims(mask, -1)
     mask = mask/255.0
     return mask
@@ -57,9 +58,9 @@ class DataGen(Dataset):
     def __getitem__(self, index):
         
         image = parse_image(self.images_path[index], self.image_h, self.image_w)
-        print(f'index {index} image shape {image.shape}')
+        # print(f'index {index} image shape {image.shape}')
         mask = parse_mask(self.masks_path[index], self.image_h, self.image_w)
-        print(f'index {index} mask shape {mask.shape}')
+        # print(f'index {index} mask shape {mask.shape}')
 
         return image, mask
 
