@@ -177,7 +177,7 @@ for epoch in range(150):
         total_correct += preds.argmax(dim=1).eq(labels).sum().item()
 
         print("finished batch ", n, " for epoch ", epoch)
-    
+    print('done with batch loop')
     # Validation phase
     model.eval()
     valid_loss = 0
