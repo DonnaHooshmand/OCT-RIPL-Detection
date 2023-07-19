@@ -147,7 +147,7 @@ for epoch in range(150):
     total_loss = 0
     n = 0
     for t, batch in enumerate(train_loader):
-        if n != 11:
+        if n != 10:
             n+=1
             images, labels = batch
             images = images.to(device, dtype=torch.float)
