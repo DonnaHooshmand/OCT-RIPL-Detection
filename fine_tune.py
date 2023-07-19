@@ -61,7 +61,7 @@ def split_dataset(image_dir, mask_dir, train_dir, train_mdir,
         for file in files:
             image_path = os.path.join(image_dir, file)
             mask_file_name = file.split('.')[0] + '.png'
-            mask_path = os.path.join(mask_dir, file)  # Replace 'path_to_masks' with the actual path to the masks
+            mask_path = os.path.join(mask_dir, mask_file_name)  # Replace 'path_to_masks' with the actual path to the masks
             shutil.copy(image_path, target_dir)
             shutil.copy(mask_path, target_mdir)  # Adjust this line if the masks are in a different folder
 
