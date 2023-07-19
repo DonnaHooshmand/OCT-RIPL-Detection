@@ -153,9 +153,9 @@ for epoch in range(150):
         labels = labels.to(device, dtype=torch.float)
 
         optimizer.zero_grad()
-        # images = images.unsqueeze(1).to(device)
+        images = images.unsqueeze(1).to(device)
         labels = labels.permute(0, 3, 1, 2).to(device)
-        images = images.permute(0, 3, 1, 2).to(device)
+        # images = images.permute(0, 3, 1, 2).to(device)
 
         # print('the dimensions of the input image is: ', images.shape)
         preds = model(images)
@@ -181,9 +181,9 @@ for epoch in range(150):
             images = images.to(device, dtype=torch.float)
             labels = labels.to(device, dtype=torch.float)
 
-            # images = images.unsqueeze(1).to(device)
+            images = images.unsqueeze(1).to(device)
             labels = labels.permute(0, 3, 1, 2).to(device)
-            images = images.permute(0, 3, 1, 2).to(device)
+            # images = images.permute(0, 3, 1, 2).to(device)
 
             preds = model(images)
             
