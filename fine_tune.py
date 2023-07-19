@@ -140,6 +140,10 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 epoch_tracker = {}
 
+for t, batch in enumerate(train_loader):
+    print(t)
+
+
 # The training loop
 for epoch in range(150):
     total_correct = 0
