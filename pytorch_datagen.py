@@ -58,6 +58,7 @@ class DataGen(Dataset):
     def __getitem__(self, index):
         
         image = parse_image(self.images_path[index], self.image_size, self.noise)
+        print(f'index {index} image shape {image.shape}')
         mask = parse_mask(self.masks_path[index], self.image_size)
 
         return image, mask
