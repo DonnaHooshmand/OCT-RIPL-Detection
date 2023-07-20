@@ -186,5 +186,5 @@ if __name__ == "__main__":
     plt.savefig('roads_loss_plot.png')
 
     print(epoch_tracker)
-    torch.save(model.state_dict(), 'trained_resUnetPlusPlus.pkl')
+    torch.save(model.state_dict(), 'Roads_trained_resUnetPlusPlus.pkl')
 
