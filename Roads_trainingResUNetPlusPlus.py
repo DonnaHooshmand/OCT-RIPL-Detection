@@ -18,7 +18,7 @@ import cv2
 from glob import glob
 
 from pytorch_datagen import DataGen
-from resunetPlusPlus_pytorch_copy import build_resunetplusplus
+from resunetPlusPlus_pytorch_1channel import build_resunetplusplus
 
 # from torchmetrics.classification import Dice
 # from pytorch_toolbelt.losses import dice

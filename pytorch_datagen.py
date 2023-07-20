@@ -16,7 +16,6 @@ def parse_image(img_path, image_size, noise):
     else:
         image_rgb = cv2.resize(image_rgb, (image_size, image_size))
     if noise==True:
-        print('adding noise')
         gray_image = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2GRAY)
         noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=np.var(gray_image)*2)
         # noisy_image = add_gaussian_noise(gray_image, mean=0, std_dev=3)
@@ -59,7 +58,6 @@ class DataGen(Dataset):
     def __getitem__(self, index):
         
         image = parse_image(self.images_path[index], self.image_size, self.noise)
-        print(f'index {index} image shape {image.shape}')
         mask = parse_mask(self.masks_path[index], self.image_size)
 
         return image, mask
