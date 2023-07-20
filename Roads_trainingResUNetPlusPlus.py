@@ -20,7 +20,7 @@ from glob import glob
 from pytorch_datagen import DataGen
 from resunetPlusPlus_pytorch_copy import build_resunetplusplus
 
-from torchmetrics.classification import Dice
+# from torchmetrics.classification import Dice
 # from pytorch_toolbelt.losses import dice
 
 def displayTensor(input_img: torch.tensor, file_name) -> None:
@@ -184,7 +184,7 @@ if __name__ == "__main__":
 
         train_losses.append(train_loss)
         val_losses.append(valid_loss)
-        
+
         if epoch % 10 == 0:
             epoch_tracker[epoch] = ['training loss: ', train_loss, 'training accuracy: ', train_accuracy, 'validation loss: ', valid_loss, 'validation accuracy: ', valid_accuracy]
             
