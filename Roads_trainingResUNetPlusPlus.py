@@ -31,37 +31,7 @@ def displayTensor(input_img: torch.tensor, file_name) -> None:
     input_img_cpu = np.squeeze(input_img_cpu)
     plt.imsave(file_name,input_img_cpu, cmap='gray')
 
-class BCEDiceLoss(nn.Module):
-    def __init__(self, weight=None, size_average=True):
-        super().__init__()
 
-    def forward(self, input, target):
-        pred = input.view(-1)
-        truth = target.view(-1)
-
-        # BCE loss
-        bce_loss = nn.BCELoss()(pred, truth).double()
-
-        # Dice Loss
-        dice_coef = (2.0 * (pred * truth).double().sum() + 1) / (
-            pred.double().sum() + truth.double().sum() + 1
-        )
-
-        return bce_loss + (1 - dice_coef)
-
-def dice_coeff(input, target):
-    num_in_target = input.size(0)
-
-    smooth = 1.0
-
-    pred = input.view(num_in_target, -1)
-    truth = target.view(num_in_target, -1)
-
-    intersection = (pred * truth).sum(1)
-
-    loss = (2.0 * intersection + smooth) / (pred.sum(1) + truth.sum(1) + smooth)
-
-    return loss.mean().item()
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -117,7 +87,7 @@ if __name__ == "__main__":
     model = build_resunetplusplus()
     model = model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
-    loss_type = Dice().to(device)
+    # loss_type = Dice().to(device)
     
     epoch_tracker = {}
 
