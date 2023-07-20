@@ -73,8 +73,8 @@ if __name__ == "__main__":
     valid_steps = len(valid_image_paths)//batch_size
     print("valid steps: ", valid_steps)
     
-    train_gen = DataGen(image_size, train_image_paths, train_mask_paths)
-    valid_gen = DataGen(image_size, valid_image_paths, valid_mask_paths)
+    train_gen = DataGen(image_size, train_image_paths, train_mask_paths, noise=True)
+    valid_gen = DataGen(image_size, valid_image_paths, valid_mask_paths, noise=True)
     
     ## Turn the data into a torch.utils.data thing
     train_loader = torch.utils.data.DataLoader(train_gen, batch_size=8)
