@@ -25,6 +25,7 @@ from pytorch_datagen_finetune import DataGen
 import os
 import shutil
 import random
+import pandas as pd
 
 
 def split_dataset(image_dir, mask_dir, train_dir, train_mdir, 
@@ -138,7 +139,7 @@ model = build_resunetplusplus()
 model = model.to(device)
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-epoch_tracker = {}
+# epoch_tracker = {}
 
 # for t, batch in enumerate(train_loader):
 #     print(t)
@@ -206,8 +207,8 @@ for epoch in range(150):
     train_losses.append(train_loss)
     val_losses.append(valid_loss)
 
-    if epoch % 10 == 0:
-        epoch_tracker[epoch] = ['training loss: ', train_loss, 'training accuracy: ', train_accuracy, 'validation loss: ', valid_loss, 'validation accuracy: ', valid_accuracy]
+    # if epoch % 10 == 0:
+    #     epoch_tracker[epoch] = ['training loss: ', train_loss, 'training accuracy: ', train_accuracy, 'validation loss: ', valid_loss, 'validation accuracy: ', valid_accuracy]
         
     # Print or store the results
     print('-------------------Epoch:', epoch)
@@ -216,6 +217,10 @@ for epoch in range(150):
 
     # Switch back to training mode
     model.train()
+
+loss_dict = {'train_loss': train_losses, 'val_loss': val_losses}
+df = pd.DataFrame(loss_dict)
+df.to_csv('finetune_loss.csv')
 
 epochs = range(1, len(train_losses) + 1)
 
