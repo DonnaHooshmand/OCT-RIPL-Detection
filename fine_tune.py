@@ -198,11 +198,21 @@ for epoch in range(150):
             # v_accuracy += dice_coeff(preds, labels), preds.size(0)
             valid_correct += preds.argmax(dim=1).eq(labels).sum().item()
 
+            ### test for if value for v changes when exiting this loop
+            ### test loss values on frozen model -- if the frozen model changes then look at individual image dimensions
+
+    ### t = train steps, v = valid steps
+    ### loss should not be greater than 1
+    ### make sure all labels are 1 or 0
+    ### make sure outputs are 1 or 0
+
     # Calculate average losses and accuracies
     train_loss = total_loss / (t+1)
     train_accuracy = total_correct / (t+1)
     valid_loss = valid_loss / (v+1)
     valid_accuracy = valid_correct / (v+1)
+
+
 
     train_losses.append(train_loss)
     val_losses.append(valid_loss)
