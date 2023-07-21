@@ -239,10 +239,10 @@ plt.title('Training and Validation Loss over Epochs for Fine-Tuning')
 plt.legend()
 
 
-plt.savefig('finetune_loss_plot.png')
+plt.savefig('finetune_loss_plot_2.png')
 
-print(epoch_tracker)
-torch.save(model.state_dict(), 'finetuned_resUnetPlusPlus_gb.pkl')
+
+torch.save(model.state_dict(), 'finetuned_resUnetPlusPlus_gb_2.pkl')
 
 
 
