@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 class Squeeze_Excitation(nn.Module):
     def __init__(self, channel, r=8):
@@ -191,7 +192,7 @@ class build_resunetplusplus(nn.Module):
         output = self.aspp(d3)
         output = self.output(output)
 
-        return output
+        return F.log_softmax(output, dim=1)
 
 
 if __name__ == "__main__":
