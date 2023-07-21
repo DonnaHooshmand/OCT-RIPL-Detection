@@ -76,7 +76,7 @@ model.load_state_dict(torch.load(model_path))
 model.to(device)
 
 freeze = True
-# freezing everything after the last decoder block
+# freezing everything before the last decoder block
 for name, parameter in model.named_parameters():
     if 'd3' in name:
         freeze = False
@@ -223,7 +223,7 @@ for epoch in range(150):
 
 loss_dict = {'train_loss': train_losses, 'val_loss': val_losses}
 df = pd.DataFrame(loss_dict)
-df.to_csv('finetune_loss.csv')
+df.to_csv('finetune_loss_last_decode.csv')
 
 epochs = range(1, len(train_losses) + 1)
 
@@ -242,10 +242,10 @@ plt.title('Training and Validation Loss over Epochs for Fine-Tuning')
 plt.legend()
 
 
-plt.savefig('finetune_loss_plot_2.png')
+plt.savefig('finetune_loss_plot_last_decode.png')
 
 
-torch.save(model.state_dict(), 'finetuned_resUnetPlusPlus_gb_2.pkl')
+torch.save(model.state_dict(), 'finetuned_resUnetPlusPlus_last_decode.pkl')
 
 
 
