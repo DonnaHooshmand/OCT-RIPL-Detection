@@ -68,8 +68,8 @@ def overlayDisplay(input_img: torch.tensor, mask1: torch.tensor, mask2: torch.te
     plt.imsave("all_display.png", out)
 
 if __name__ == "__main__":
-    model_path = "ColonoscopyTrained_resUnetPlusPlus.pkl"
-    save_path = "result"
+    model_path = "OGtrained_resUnetPlusPlus.pkl"
+    save_path = "result/OG"
     test_path = "new_data/kvasir_segmentation_dataset/test/"
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -134,4 +134,8 @@ if __name__ == "__main__":
 
 
     print("done")
+
+
+
+
 
