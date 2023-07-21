@@ -96,7 +96,7 @@ if __name__ == "__main__":
       
     test_steps = len(test_image_paths)//batch_size
     print("test steps: ", test_steps)
-    test_gen = DataGen(image_size, test_image_paths, test_mask_paths, noise=True)
+    test_gen = DataGen(image_size, test_image_paths, test_mask_paths)
     test_loader = torch.utils.data.DataLoader(test_gen)
     
     #switch off autograd
@@ -111,8 +111,9 @@ if __name__ == "__main__":
             
             masks = masks.to(device, dtype=torch.float)
             
-            images = images.unsqueeze(1).to(device)
+            # images = images.unsqueeze(1).to(device)
             masks = masks.permute(0, 3, 1, 2).to(device)
+            images = images.permute(0, 3, 1, 2).to(device)
             
             predict_mask = model(images).to(device)
             # print("**", images.shape, images.dtype, masks.shape, masks.dtype, predict_mask.shape, predict_mask.dtype)
