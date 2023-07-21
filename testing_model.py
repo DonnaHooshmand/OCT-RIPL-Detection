@@ -96,7 +96,7 @@ if __name__ == "__main__":
       
     test_steps = len(test_image_paths)//batch_size
     print("test steps: ", test_steps)
-    test_gen = DataGen(image_size, test_image_paths, test_mask_paths)
+    test_gen = DataGen(image_size, test_image_paths, test_mask_paths, noise=True)
     test_loader = torch.utils.data.DataLoader(test_gen)
     
     #switch off autograd
