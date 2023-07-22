@@ -17,6 +17,9 @@ import numpy as np
 import cv2
 from glob import glob
 
+import shutil
+import random
+
 from pytorch_datagen import DataGen
 from resunetPlusPlus_pytorch_1channel_nosoftmax import build_resunetplusplus
 
@@ -28,6 +31,46 @@ def displayTensor(input_img: torch.tensor, file_name) -> None:
     input_img_cpu = input_img.detach().cpu().numpy()
     input_img_cpu = np.squeeze(input_img_cpu)
     plt.imsave(file_name,input_img_cpu, cmap='gray')
+
+def split_dataset(image_dir, mask_dir, train_dir, train_mdir, 
+                  validation_dir, validation_mdir, test_dir, 
+                  test_mdir, split_ratios=(0.8, 0.1, 0.1)):
+    # Create target directories
+    os.makedirs(train_dir, exist_ok=True)
+    os.makedirs(validation_dir, exist_ok=True)
+    os.makedirs(test_dir, exist_ok=True)
+    os.makedirs(train_mdir, exist_ok=True)
+    os.makedirs(validation_mdir, exist_ok=True)
+    os.makedirs(test_mdir, exist_ok=True)
+
+    # Get a list of all files in the source directory
+    file_list = os.listdir(image_dir)
+
+    # Shuffle the file list to randomize the order
+    random.shuffle(file_list)
+
+    # Calculate the number of files for each split
+    num_files = len(file_list)
+    num_train = int(split_ratios[0] * num_files)
+    num_validation = int(split_ratios[1] * num_files)
+
+    # Split the dataset
+    train_files = file_list[:num_train]
+    validation_files = file_list[num_train:num_train + num_validation]
+    test_files = file_list[num_train + num_validation:]
+
+    # Move images and masks to their respective split folders
+    for files, target_dir, target_mdir in [(train_files, train_dir, train_mdir), 
+                                           (validation_files, validation_dir, validation_mdir), 
+                                           (test_files, test_dir, test_mdir)]:
+        for file in files:
+            image_path = os.path.join(image_dir, file)
+            mask_file_name = file.split('.')[0] + '.png'
+            mask_path = os.path.join(mask_dir, mask_file_name)  # Replace 'path_to_masks' with the actual path to the masks
+            shutil.copy(image_path, target_dir)
+            shutil.copy(mask_path, target_mdir)  # Adjust this line if the masks are in a different folder
+
+
 
 
 if __name__ == "__main__":
