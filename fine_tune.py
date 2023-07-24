@@ -96,7 +96,7 @@ validation_mdir = r'data/RIPL_data/valid_mask'
 test_dir = r'data/RIPL_data/test_img'
 test_mdir = r'data/RIPL_data/test_mask'
 
-split_dataset(image_path, mask_path, train_dir, train_mdir, validation_dir, validation_mdir, test_dir, test_mdir)
+# split_dataset(image_path, mask_path, train_dir, train_mdir, validation_dir, validation_mdir, test_dir, test_mdir)
 
  ## Training
 train_image_paths = glob(os.path.join(train_dir, "*"))
@@ -113,7 +113,7 @@ valid_mask_paths.sort()
 ## Parameters
 image_h = 496
 image_w = 768
-batch_size = 8
+batch_size = 4
 lr = 1e-4
 epochs = 200
 
