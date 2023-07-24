@@ -96,7 +96,7 @@ validation_mdir = r'data/RIPL_data/valid_mask'
 test_dir = r'data/RIPL_data/test_img'
 test_mdir = r'data/RIPL_data/test_mask'
 
-split_dataset(image_path, mask_path, train_dir, train_mdir, validation_dir, validation_mdir, test_dir, test_mdir)
+# split_dataset(image_path, mask_path, train_dir, train_mdir, validation_dir, validation_mdir, test_dir, test_mdir)
 
  ## Training
 train_image_paths = glob(os.path.join(train_dir, "*"))
@@ -113,7 +113,7 @@ valid_mask_paths.sort()
 ## Parameters
 image_h = 496
 image_w = 768
-batch_size = 8
+batch_size = 4
 lr = 1e-4
 epochs = 200
 
@@ -230,7 +230,7 @@ for epoch in range(150):
 
 loss_dict = {'train_loss': train_losses, 'val_loss': val_losses}
 df = pd.DataFrame(loss_dict)
-df.to_csv('finetune_loss.csv')
+df.to_csv('finetune_loss_softmax.csv')
 
 epochs = range(1, len(train_losses) + 1)
 
@@ -245,14 +245,14 @@ plt.plot(epochs, val_losses, label='Validation Loss', marker='', linestyle='-', 
 # Add labels, title, and legend
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
-plt.title('Training and Validation Loss over Epochs for Fine-Tuning')
+plt.title('Training and Validation Loss over Epochs for Fine-Tuning with SoftMax')
 plt.legend()
 
 
-plt.savefig('finetune_loss_plot_2.png')
+plt.savefig('finetune_loss_plot_softmax.png')
 
 
-torch.save(model.state_dict(), 'finetuned_resUnetPlusPlus_gb_2.pkl')
+torch.save(model.state_dict(), 'finetuned_resUnetPlusPlus_softmax.pkl')
 
 
 

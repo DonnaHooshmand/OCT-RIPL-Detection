@@ -20,8 +20,8 @@ from glob import glob
 import shutil
 import random
 
-from pytorch_datagen import DataGen
-from resunetPlusPlus_pytorch_1channel_nosoftmax import build_resunetplusplus
+from pytorch_datagen_finetune import DataGen
+from resunetPlusPlus_pytorch_1channel import build_resunetplusplus
 
 
 def displayTensor(input_img: torch.tensor, file_name) -> None:
@@ -77,22 +77,25 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("GPU available: ", torch.cuda.is_available())
 
-    model_path = r'ColonoscopyTrained_resUnetPlusPlus.pkl'    
+    model_path = r'finetuned_resUnetPlusPlus_gb.pkl'    
     model = build_resunetplusplus()
     model.load_state_dict(torch.load(model_path))
     model.to(device)
 
 
-    for name, parameter in model.named_parameters():
-        if 'output' in name:
-            print(f"parameter '{name}' will not be freezed")
-            parameter.requires_grad = True
-        else:
-            parameter.requires_grad = False
 
+    image_path = r'data/RIPL_data/RIPL_all'
+    mask_path = r'data/RIPL_data/masks'
 
+    train_dir =  r'data/RIPL_data/train_img'
+    train_mdir = r'data/RIPL_data/train_mask' 
     validation_dir = r'data/RIPL_data/valid_img'
     validation_mdir = r'data/RIPL_data/valid_mask'
+    test_dir = r'data/RIPL_data/test_img'
+    test_mdir = r'data/RIPL_data/test_mask'
+
+    # split_dataset(image_path, mask_path, train_dir, train_mdir, validation_dir, validation_mdir, test_dir, test_mdir)
+
 
     valid_image_paths = glob(os.path.join(validation_dir, "*"))
     valid_mask_paths = glob(os.path.join(validation_mdir, "*"))
@@ -108,11 +111,17 @@ if __name__ == "__main__":
 
     valid_steps = len(valid_image_paths)//batch_size
     print("valid steps: ", valid_steps)
+    print("len(valid_image_paths): ", len(valid_image_paths))
+    print("len(valid_mask_pahts): ", len(valid_mask_paths))
 
     valid_gen = DataGen(image_h, image_w, valid_image_paths, valid_mask_paths)
-
+    # t = 0
+    # for thing in valid_gen:
+    #     print("t: ", t, " thing: ", thing)
     ## Turn the data into a torch.utils.data thing
     valid_loader = torch.utils.data.DataLoader(valid_gen, batch_size=8)
+
+    # print('valid type: ', type(valid_loader))
 
     val_losses = []
     # The training loop
@@ -125,6 +134,7 @@ if __name__ == "__main__":
         # v_accuracy = 0
         with torch.no_grad():
             for v, batch in enumerate(valid_loader):
+                # print("v: ", v, " batch: ", batch)
                 images, labels = batch
                 images = images.to(device, dtype=torch.float)
                 labels = labels.to(device, dtype=torch.float)
@@ -134,7 +144,8 @@ if __name__ == "__main__":
                 # images = images.permute(0, 3, 1, 2).to(device)
 
                 preds = model(images)
-                print('preds: ', preds)
+                # print('preds: ', preds)
+                print('unique values in preds: ', torch.unique(preds))
                 
                 loss = F.mse_loss(preds, labels).to(device)
                 # loss = loss_type(preds, labels).to(device)
