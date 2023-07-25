@@ -11,7 +11,7 @@ from torch.utils.data import Dataset
 def parse_image(img_path, image_h, image_w, noise):
     image_rgb = (cv2.imread(img_path, 1)/255).astype(np.float32)
 
-    h, w = image_rgb.shape
+    h, w, _ = image_rgb.shape
     if (h == image_h) and (w == image_w):
         pass
     else:
