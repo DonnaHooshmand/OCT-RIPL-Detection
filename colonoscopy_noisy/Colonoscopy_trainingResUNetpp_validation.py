@@ -20,8 +20,7 @@ from glob import glob
 from pytorch_datagen import DataGen
 from resunetPlusPlus_pytorch_copy import build_resunetplusplus
 
-from torchmetrics.classification import Dice
-# from pytorch_toolbelt.losses import dice
+
 
 def displayTensor(input_img: torch.tensor, file_name) -> None:
     """

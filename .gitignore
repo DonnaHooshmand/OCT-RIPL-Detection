@@ -1,0 +1,4 @@
+OCT_venv/
+.DS_Store
+__pycache__/resunetPlusPlus_pytorch_1channel.cpython-310.pyc
+__pycache__/resunetPlusPlus_pytorch_1channel_nosoftmax.cpython-310.pyc
