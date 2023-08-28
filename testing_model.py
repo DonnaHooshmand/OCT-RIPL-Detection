@@ -20,7 +20,7 @@ import cv2
 from glob import glob
 from tqdm import tqdm
 
-from pytorch_datagen import DataGen
+from colonoscopy_noisy.pytorch_datagen_resizeorch_datagen import DataGen
 from pytorch_datagen import *
 from resunetPlusPlus_pytorch_copy import build_resunetplusplus
 

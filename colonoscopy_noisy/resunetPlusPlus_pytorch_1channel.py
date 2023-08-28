@@ -192,7 +192,7 @@ class build_resunetplusplus(nn.Module):
         output = self.aspp(d3)
         output = self.output(output)
 
-        return F.log_softmax(output, dim=1)
+        return output
 
 
 if __name__ == "__main__":

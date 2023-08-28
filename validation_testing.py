@@ -20,8 +20,8 @@ from glob import glob
 import shutil
 import random
 
-from pytorch_datagen_finetune import DataGen
-from resunetPlusPlus_pytorch_1channel import build_resunetplusplus
+from colonoscopy_noisy.pytorch_datagen_finetune import DataGen
+from colonoscopy_noisy.resunetPlusPlus_pytorch_1channel import build_resunetplusplus
 
 
 def displayTensor(input_img: torch.tensor, file_name) -> None:
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("GPU available: ", torch.cuda.is_available())
 
-    model_path = r'finetuned_resUnetPlusPlus_gb.pkl'    
+    model_path = r'colonoscopy_noisy\resize_colonoscopy_trained_resUnetPlusPlus.pkl'    
     model = build_resunetplusplus()
     model.load_state_dict(torch.load(model_path))
     model.to(device)
