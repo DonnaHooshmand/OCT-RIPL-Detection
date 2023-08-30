@@ -76,7 +76,7 @@ def get_unique_pixel_values(image):
 
 SDD_train_folder = r'C:\Users\collaborations\Desktop\SDDs\train'
 SDD_val_folder = r'C:\Users\collaborations\Desktop\SDDs\val'
-SDD_segmentation_folder = r'C:\Users\collaborations\Desktop\SDDs\segmentation'
+SDD_segmentation_folder = r'C:\Users\collaborations\Desktop\SDDs\segmentations'
 target_pixel_value = (255, 0, 0, 180)
 SDD_count = 0
 total_count = 0
@@ -85,40 +85,54 @@ total_count = 0
 print('starting')
 print(f'found {len(os.listdir(SDD_train_folder))} train files')
 for filename in os.listdir(SDD_train_folder):
+
+    total_count += 1
+    print(f'file {total_count}, {filename}')
+    SDD_found = False
+
+    image_path = os.path.join(SDD_train_folder, filename)
+    image = Image.open(image_path)
+    print(image_path)
+
     # print(filename)
     # Find the annotation corresponding to the segmentation
-    annotation_path = find_annotation(SDD_segmentation_folder, SDD_train_folder)
+    segmentation_file = os.path.join(SDD_segmentation_folder, filename)
+    annotation_path = find_annotation(segmentation_file, SDD_train_folder)
 
     # Check if the annotation existss
     if annotation_path is not None:
         # Convert the annotation to a mask
-        annotation_array = convert_annotation(SDD_train_folder)
-        segmentation_array = convert_segmentation(SDD_segmentation_folder)
+        annotation_array = convert_annotation(annotation_path)
+        segmentation_array = convert_segmentation(segmentation_file)
+        print("segmentation_array: ", np.sum(segmentation_array, axis=2).any(), " annotation_array: ", np.sum(annotation_array, axis=2).any())
         mask_array = segmentation_array - annotation_array
         mask_array[mask_array == 130] = 255
         mask_array[mask_array == 131] = 255
         mask_array[mask_array == 1] = 0
 
-    mask_array = np.sum(mask_array, axis=2)
-    if mask_array > 0:
-        SDD_found = True
 
-    total_count += 1
-    print(f'file {total_count}')
-
-    SDD_found = False
-    image_path = os.path.join(SDD_train_folder, filename)
-    image = Image.open(image_path)
+    print("mask array sum: ", np.sum(mask_array, axis=2).any())
+    if mask_array.any() > 0:
+        if np.sum(mask_array, axis=2).all() <= 0:
+            pass
+        else: 
+            print("found a thing")
+            SDD_found = True
     
+    annotation = False
     for x in range(image.width):
         for y in range(image.height):
             pixel = image.getpixel((x, y))
             if pixel == target_pixel_value:
+                annotation = True
                 SDD_found = True
                 # print(f"Found target pixel at ({x}, {y}) in {filename}")
+    if annotation == True:
+        print("annotation")
     if SDD_found == True:
         SDD_count += 1
 
+''' # Merged two files. no need.
 print(f'found {len(os.listdir(SDD_val_folder))} val files')
 for filename in os.listdir(SDD_val_folder):
     # print(filename)
@@ -138,5 +152,7 @@ for filename in os.listdir(SDD_val_folder):
                 # print(f"Found target pixel at ({x}, {y}) in {filename}")
     if SDD_found == True:
         SDD_count += 1
-
+'''
+    
+        
 print(f'out of {total_count} B-scans, {SDD_count} had identified SDDs')

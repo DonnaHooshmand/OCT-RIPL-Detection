@@ -77,7 +77,7 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("GPU available: ", torch.cuda.is_available())
 
-    model_path = r'colonoscopy_noisy\resize_colonoscopy_trained_resUnetPlusPlus.pkl'    
+    model_path = r'colonoscopy_noisy\threshold_trained_resUnetPlusPlus.pkl'    
     model = build_resunetplusplus()
     model.load_state_dict(torch.load(model_path))
     model.to(device)
@@ -126,7 +126,7 @@ if __name__ == "__main__":
                 # print("v: ", v, " batch: ", batch)
                 images, labels = batch
                 plt.hist(np.ndarray.flatten(np.array(labels)))
-                plt.ylim(0, 10)
+                # plt.ylim(0, 10)
                 plt.show()
                 images = images.to(device, dtype=torch.float)
                 labels = labels.to(device, dtype=torch.float)
@@ -165,5 +165,5 @@ if __name__ == "__main__":
 
     print('unique values in val_losses: ', set(val_losses))
     
-    torch.save(model.state_dict(), 'OGtrained_resUnetPlusPlus.pkl')
+    # torch.save(model.state_dict(), 'OGtrained_resUnetPlusPlus.pkl')
 
