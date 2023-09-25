@@ -2,6 +2,26 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 
+
+import torch.nn as nn
+import torch.optim as optim
+
+
+import torchvision
+import torchvision.transforms as transforms
+
+import matplotlib.pyplot as plt
+
+import os
+import cv2
+from glob import glob
+
+import shutil
+import random
+
+from pytorch_datagen import DataGen
+from resunetPlusPlus_pytorch_3channels import build_resunetplusplus
+
 smooth = 1.
 
 def dice_coef(y_true, y_pred):
@@ -53,3 +73,13 @@ def calculate_precision_recall(pred_masks, true_masks, class_idx):
 class_idx = 1
 precision, recall = calculate_precision_recall(pred_masks, true_masks, class_idx)
 print(f"Class {class_idx}: Precision = {precision}, Recall = {recall}")
+
+
+if __name__ == "__main__":
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print("GPU available: ", torch.cuda.is_available())
+
+    model_path = r'colonoscopy_noisy\threshold_trained_resUnetPlusPlus.pkl'    
+    model = build_resunetplusplus()
+    model.load_state_dict(torch.load(model_path))
+    model.to(device)

@@ -20,7 +20,7 @@ from glob import glob
 import shutil
 import random
 
-from pytorch_datagen_resize import DataGen
+from pytorch_datagen_threshold import DataGen
 from resunetPlusPlus_pytorch_1channel import build_resunetplusplus
 
 
@@ -95,8 +95,9 @@ if __name__ == "__main__":
     valid_mask_paths.sort()
     
     ## Parameters
-    image_h = 496
-    image_w = 768
+    # image_h = 496
+    # image_w = 768
+    image_size = 256
     batch_size = 8
     lr = 1e-4
     epochs = 200
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     print("valid steps: ", valid_steps)
     
 
-    valid_gen = DataGen(image_h, image_w, valid_image_paths, valid_mask_paths, noise=True)
+    valid_gen = DataGen(image_size, valid_image_paths, valid_mask_paths, noise=True)
     
     ## Turn the data into a torch.utils.data thing
  
@@ -125,9 +126,10 @@ if __name__ == "__main__":
             for v, batch in enumerate(valid_loader):
                 # print("v: ", v, " batch: ", batch)
                 images, labels = batch
-                plt.hist(np.ndarray.flatten(np.array(labels)))
+                # plt.hist(np.ndarray.flatten(np.array(labels)))
                 # plt.ylim(0, 10)
-                plt.show()
+                # plt.show()
+                
                 images = images.to(device, dtype=torch.float)
                 labels = labels.to(device, dtype=torch.float)
                 
