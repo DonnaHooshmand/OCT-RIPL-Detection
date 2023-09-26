@@ -39,21 +39,21 @@ def dice_loss(y_true, y_pred):
 
 def calculate_iou(predicted_masks, ground_truth_masks, threshold=0.5):
     """
-    Calculate Intersection over Union (IoU) for a segmentation task.
+    Calculate Intersection over Union (IoU) for a segmentation task using PyTorch.
 
     Args:
-        predicted_masks (np.ndarray): Predicted binary masks (0 or 1).
-        ground_truth_masks (np.ndarray): Ground truth binary masks (0 or 1).
+        predicted_masks (torch.Tensor): Predicted binary masks (0 or 1).
+        ground_truth_masks (torch.Tensor): Ground truth binary masks (0 or 1).
         threshold (float, optional): Threshold for predicted masks. Default is 0.5.
 
     Returns:
-        float: Mean IoU score.
+        torch.Tensor: IoU score
     """
-    predicted_masks = (predicted_masks > threshold).astype(np.uint8)
-    ground_truth_masks = (ground_truth_masks > 0.5).astype(np.uint8)
+    predicted_masks = (predicted_masks > threshold).float()
+    ground_truth_masks = (ground_truth_masks > 0.5).float()
     
-    intersection = np.logical_and(predicted_masks, ground_truth_masks).sum()
-    union = np.logical_or(predicted_masks, ground_truth_masks).sum()
+    intersection = (predicted_masks * ground_truth_masks).sum()
+    union = (predicted_masks + ground_truth_masks).clamp(0, 1).sum()
 
     iou = intersection / (union + 1e-6)
     
@@ -61,15 +61,15 @@ def calculate_iou(predicted_masks, ground_truth_masks, threshold=0.5):
 
 def calculate_miou(predicted_masks, ground_truth_masks, threshold=0.5):
     """
-    Calculate Mean Intersection over Union (mIoU) for a segmentation task.
+    Calculate Mean Intersection over Union (mIoU) for a segmentation task using PyTorch.
 
     Args:
-        predicted_masks (list of np.ndarray): List of predicted binary masks.
-        ground_truth_masks (list of np.ndarray): List of ground truth binary masks.
+        predicted_masks (list of torch.Tensor): List of predicted binary masks.
+        ground_truth_masks (list of torch.Tensor): List of ground truth binary masks.
         threshold (float, optional): Threshold for predicted masks. Default is 0.5.
 
     Returns:
-        float: Mean IoU score.
+        torch.Tensor: Mean IoU score.
     """
     num_samples = len(predicted_masks)
     total_iou = 0.0
@@ -87,27 +87,25 @@ def calculate_miou(predicted_masks, ground_truth_masks, threshold=0.5):
 # Recall
 # Precision
 
-import numpy as np
-
 def calculate_precision_recall(predicted_masks, ground_truth_masks, threshold=0.5):
     """
-    Calculate Precision and Recall for a segmentation task.
+    Calculate Precision and Recall for a segmentation task using PyTorch.
 
     Args:
-        predicted_masks (np.ndarray): Predicted binary masks (0 or 1).
-        ground_truth_masks (np.ndarray): Ground truth binary masks (0 or 1).
+        predicted_masks (torch.Tensor): Predicted binary masks (0 or 1).
+        ground_truth_masks (torch.Tensor): Ground truth binary masks (0 or 1).
         threshold (float, optional): Threshold for predicted masks. Default is 0.5.
 
     Returns:
-        float: Precision
-        float: Recall
+        torch.Tensor: Precision
+        torch.Tensor: Recall
     """
-    predicted_masks = (predicted_masks > threshold).astype(np.uint8)
-    ground_truth_masks = (ground_truth_masks > 0.5).astype(np.uint8)
+    predicted_masks = (predicted_masks > threshold).float()
+    ground_truth_masks = (ground_truth_masks > 0.5).float()
 
-    true_positives = np.logical_and(predicted_masks, ground_truth_masks).sum()
-    false_positives = np.logical_and(predicted_masks, 1 - ground_truth_masks).sum()
-    false_negatives = np.logical_and(1 - predicted_masks, ground_truth_masks).sum()
+    true_positives = (predicted_masks * ground_truth_masks).sum()
+    false_positives = (predicted_masks * (1 - ground_truth_masks)).sum()
+    false_negatives = ((1 - predicted_masks) * ground_truth_masks).sum()
 
     precision = true_positives / (true_positives + false_positives + 1e-6)
     recall = true_positives / (true_positives + false_negatives + 1e-6)
@@ -116,16 +114,17 @@ def calculate_precision_recall(predicted_masks, ground_truth_masks, threshold=0.
 
 
 
+
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("GPU available: ", torch.cuda.is_available())
 
-    model_path = r'colonoscopy_noisy\threshold_trained_resUnetPlusPlus.pkl'    
+    model_path = r'colonoscopy_rgb\OGtrained_resUnetPlusPlus.pkl'    
     model = build_resunetplusplus()
     model.load_state_dict(torch.load(model_path))
     model.to(device)
 
-    test_path = "new_data/kvasir_segmentation_dataset/test/"
+    test_path = r'new_data\kvasir_segmentation_dataset\test'
 
     ## Testing
     test_image_paths = glob(os.path.join(test_path, "images", "*"))
@@ -148,10 +147,9 @@ if __name__ == "__main__":
     ## Turn the data into a torch.utils.data thing
     test_loader = torch.utils.data.DataLoader(test_gen, batch_size=batch_size)
 
-    predicted_masks = []
-    true_masks = []
+    ious = []
     dice_losses = []
-    reacalls = []
+    recalls = []
     precisions = []
 
     for v, batch in enumerate(test_loader):
@@ -165,18 +163,22 @@ if __name__ == "__main__":
         images = images.permute(0, 3, 1, 2).to(device)
 
         preds = model(images)
-     
-        predicted_masks.append(np.array(preds))
-        true_masks.append(np.array(labels))
 
-        dice_loss = dice_loss(preds, labels).to(device)
-        dice_losses.append(dice_loss)
+        iou_value = calculate_iou(preds, labels, threshold=0.5)
+        print('iou value: ', iou_value)
+        ious.append(iou_value)
+        
 
-        precision, recall = calculate_precision_recall(np.array(preds), np.array(labels), threshold=0.5)
+        dice_loss_value = dice_loss(preds, labels).to(device)
+        dice_losses.append(dice_loss_value)
+
+        precision, recall = calculate_precision_recall(preds,labels, threshold=0.5)
         recalls.append(recall)
         precisions.append(precision)
+
+
         
-    miou = calculate_miou(predicted_masks, true_masks, threshold=0.5)
+    miou = sum(ious) / len(ious)
     average_dice_loss = sum(dice_losses) / len(dice_losses)
     average_recall = sum(recalls) / len(recalls)
     average_precision = sum(precisions) / len(precisions)
